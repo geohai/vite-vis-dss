@@ -9,8 +9,9 @@ import {interpolateRdBu, interpolateRdPu} from 'd3-scale-chromatic';
 import {csv} from 'd3-fetch';
 
 
-const DATA_URL = 'https://raw.githubusercontent.com/geohai/vite-vis-dss/main/data/';
-// const DATA_URL = 'data/';
+// const DATA_URL = 'https://raw.githubusercontent.com/geohai/vite-vis-dss/main/data/';
+const DATA_URL = 'data/';
+const EVERYTHING_URL = DATA_URL + 'json/P13U.json'
 const LINES_URL = DATA_URL + 'json/lines.geo.json';
 const BUSES_URL = DATA_URL + 'json/buses.geo.json';
 const BUSES_URL_2 = DATA_URL + 'json/buses.json';
@@ -28,9 +29,9 @@ const TIMESTEPS_URL = DATA_URL + 'csv/time_steps.csv';
 // style map
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const INITIAL_VIEW_STATE = {
-  latitude: 37.817,
+  latitude: 37.78,
   longitude: -122.242,
-  zoom: 15.3,
+  zoom: 12.6,
   maxZoom: 20,
   pitch: 60,
   bearing: 0
@@ -44,12 +45,12 @@ const RdBuDiscrete = range(102).map(i => RDBU_COLOR_SCALE(1-i/101));
 
 // primary component
 export default function App() {
-  const [viewLines, toggleLines] = useState(true);
-  const [viewBuses, toggleBuses] = useState(true);
+  const [viewLines, toggleLines] = useState(false);
+  const [viewBuses, toggleBuses] = useState(false);
   const [viewGlyphs, toggleGlyphs] = useState(false);
   const [viewH3, toggleH3] = useState(false);
   const [viewS2, toggleS2] = useState(false);
-  const [viewVoronoi, toggleVoronoi] = useState(true);
+  const [viewVoronoi, toggleVoronoi] = useState(false);
   const [viewContours, toggleContours] = useState(false);
   const [viewHeatmap, toggleHeatmap] = useState(false);
   const [viewCurrents, toggleCurrents] = useState(false);
@@ -63,7 +64,7 @@ export default function App() {
   const [datetimes, setDatetimes] = useState([]);
   const [currentVoltages, setCurrentVoltages] = useState([]);
   
-  const [animate, setAnimate] = useState(true);
+  const [animate, setAnimate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [speed, setSpeed] = useState(16);
 
@@ -110,6 +111,39 @@ export default function App() {
   }, [animate, timestep, speed])
 
   // layers
+  const everythingLayer = new GeoJsonLayer({
+    // types: Node, Load, Capacitor, Line, Storage, PVSystem, Transformer
+    id: 'everything',
+    data: EVERYTHING_URL,
+    opacity: 1.0,
+    getLineColor: [255, 255, 255, 63],
+    getLineWidth: f => {
+      if (f.properties.type == "Line") {
+        return 2
+      }
+      return 0
+    },
+    filled: true,
+    pointType: 'circle',
+    radiusUnits: 'meters',
+    getPointRadius: f => {
+      if (f.properties.bus == "Node") {
+        var voltage = +f.properties.peak_voltage
+        return 10000 * Math.abs(voltage-1)
+      }
+      return 2
+    },
+    getFillColor: f => {
+      if (f.properties.type == "Node") {
+        var voltage = +f.properties.peak_voltage;
+        return RDBU_COLOR_SCALE(-20*(voltage-1) + 0.5)
+      }
+      return [0, 0, 0, 0]
+    },
+    pickable: true,
+    visible: true
+  })
+
   const lineLayer = new GeoJsonLayer({
     id: 'lines',
     data: LINES_URL,
@@ -419,7 +453,8 @@ export default function App() {
           pvLayer,
           txLayer,
           currentLayer,
-          lineLayer
+          lineLayer,
+          everythingLayer
         ]}
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
