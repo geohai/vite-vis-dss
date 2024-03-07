@@ -127,9 +127,9 @@ export default function App() {
     pointType: 'circle',
     radiusUnits: 'meters',
     getPointRadius: f => {
-      if (f.properties.bus == "Node") {
+      if (f.properties.type == "Node") {
         var voltage = +f.properties.peak_voltage
-        return 10000 * Math.abs(voltage-1)
+        return 400 * Math.abs(voltage-1)
       }
       return 2
     },
@@ -521,7 +521,7 @@ export default function App() {
           Transformers
         </button>
         <button 
-          onClick = {() => toggleTX(!viewHeatmap)}
+          onClick = {() => toggleHeatmap(!viewHeatmap)}
           style = {layerButtonStyle(viewHeatmap, 13.4)}> 
           Heatmap
         </button>
