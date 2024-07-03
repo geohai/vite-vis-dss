@@ -129,14 +129,14 @@ export default function App() {
     getPointRadius: f => {
       if (f.properties.type == "Node") {
         var voltage = +f.properties.peak_voltage
-        return 400 * Math.abs(voltage-1)
+        return 800 * Math.abs(voltage-0.97)
       }
       return 2
     },
     getFillColor: f => {
       if (f.properties.type == "Node") {
         var voltage = +f.properties.peak_voltage;
-        return RDBU_COLOR_SCALE(-20*(voltage-1) + 0.5)
+        return RDBU_COLOR_SCALE(-20*(voltage-0.97) + 0.5)
       }
       return [0, 0, 0, 0]
     },
