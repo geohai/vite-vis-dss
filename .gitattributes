@@ -1,0 +1,4 @@
+100x/* filter=lfs diff=lfs merge=lfs -text
+10x/ filter=lfs diff=lfs merge=lfs -text
+data/100x/*.csv filter=lfs diff=lfs merge=lfs -text
+data/10x/*.csv filter=lfs diff=lfs merge=lfs -text

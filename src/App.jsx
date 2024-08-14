@@ -3,13 +3,14 @@ import Map from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer} from '@deck.gl/layers';
-import {interpolateRdBu} from 'd3-scale-chromatic';
+// import {interpolateRdBu} from 'd3-scale-chromatic';
 import {csv} from 'd3-fetch';
 
 
 // const DATA_URL = 'https://raw.githubusercontent.com/geohai/vite-vis-dss/main/data/';
 const DATA_URL = 'data/10x/';
-const BUSES_URL = DATA_URL + 'buses_df.csv';
+const BUSES_URL = DATA_URL + 'buses_tiny.csv';
+// const LINES_URL = DATA_URL + 'edges_tiny.csv';
 
 // style map
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
@@ -21,8 +22,8 @@ const INITIAL_VIEW_STATE = {
   pitch: 60,
   bearing: 0
 };
-const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
-const RDBU_COLOR_SCALE = v => toRGBArray(interpolateRdBu(v));
+// const toRGBArray = rgbStr => rgbStr.match(/\d+/g).map(Number);
+// const RDBU_COLOR_SCALE = v => toRGBArray(interpolateRdBu(v));
 const getTooltip = ({object}) => JSON.stringify(object);
 
 // primary component
@@ -59,16 +60,16 @@ export default function App() {
     pointType: 'circle',
     radiusUnits: 'meters',
     getPosition: d => [+d.lng, +d.lat],
-    getRadius: 20,
+    getRadius: 10,
     // getPointRadius: f => {
     //   var voltage = loading ? 1 : +f.voltage
     //   return 400 * Math.abs(voltage-1.01)
     // },
-    // getFillColor: [255, 255, 255],
-    getFillColor: f => {
-      var voltage = loading ? 1 : +f.voltage
-      return RDBU_COLOR_SCALE(-20*(voltage-1) + 0.5)
-    },
+    getFillColor: [255, 255, 255],
+    // getFillColor: f => {
+    //   var voltage = loading ? 1 : +f.voltage
+    //   return RDBU_COLOR_SCALE(-20*(voltage-1) + 0.5)
+    // },
     getLineWidth: 0,
     pickable: true,
     visible: viewBuses,
